@@ -211,7 +211,7 @@ function Hero() {
                     </p>
                 </div>
 
-                <div className="flex flex-col lg:flex-row w-full max-w-6xl mx-auto gap-4 sm:gap-6 md:gap-8 px-4">
+                <div className="flex flex-col lg:flex-row w-full max-w-6xl mx-auto gap-4 sm:gap-6 md:gap-8 px-4 ">
                     {[
                         { icon: IoLocationSharp, title: "Book", subtitle: "A Ticket", bg: "gray-50" },
                         {
@@ -227,7 +227,7 @@ function Hero() {
                     ].map((item, index) => (
                         <div
                             key={index}
-                            className={`bg-${item.bg} p-6 sm:p-8 md:p-12 rounded-3xl shadow-md flex-1 flex flex-col items-center text-center relative ${item.text ? 'text-' + item.text : ''}`}
+                            className={`bg-${item.bg} p-6 sm:p-8 md:p-12 rounded-3xl shadow-md flex-1 flex flex-col items-center text-center relative ${item.text ? 'text-' + item.text : ''} bg-blue-600`}
                         >
                             <div className={`absolute -top-6 sm:-top-8 bg-white p-3 sm:p-4 rounded-full shadow-lg`}>
                                 <item.icon className={`text-2xl sm:text-3xl ${item.bg === 'blue-600' ? 'text-blue-600' : 'text-blue-600'}`} />
