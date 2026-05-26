@@ -1,330 +1,752 @@
-import { useState } from 'react';
-import plane from '../assets/plane.png'
+import { useEffect, useMemo, useState } from "react";
+import { FaAirbnb, FaFacebook, FaGithub, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa6";
-import { FaGithub } from "react-icons/fa";
-import { FaInstagram } from "react-icons/fa6";
-import { FaFacebook } from "react-icons/fa";
-import { FaAirbnb } from "react-icons/fa";
-import { SiExpedia } from "react-icons/si";
-import { SiTrivago } from "react-icons/si";
-import { TbBrandBooking } from "react-icons/tb";
-import rajaAmpat from '../assets/rajaampat.jpg';
-import bali from '../assets/bali-pagoda-sunrise-indonesia.jpg';
-import labuanBajo from '../assets/labuanbajo.jpg';
-import bintan from '../assets/bintan.jpg';
-import bromo from '../assets/bromo.jpg';
-import pulauKomodo from '../assets/pulaukomodo.jpg';
-import { IoIosArrowDroprightCircle, IoIosArrowDropleftCircle } from "react-icons/io";
-import { TiStarFullOutline } from "react-icons/ti";
-import { IoLocationSharp } from "react-icons/io5";
-import { LuTicket } from "react-icons/lu";
+import { IoAirplane, IoArrowForwardOutline, IoLocationSharp, IoTimeOutline } from "react-icons/io5";
+import { IoIosArrowDropleftCircle, IoIosArrowDroprightCircle } from "react-icons/io";
 import { IoWallet } from "react-icons/io5";
-import '../App.css';
-import childFloater from "../assets/child-with-floater-by-seaside.jpg"
-import { IoArrowForwardOutline } from "react-icons/io5";
-import { IoAirplane } from "react-icons/io5";
+import { LuCalendarDays, LuCheck, LuClock3, LuMapPin, LuSearch, LuTicket } from "react-icons/lu";
+import { SiExpedia, SiTrivago } from "react-icons/si";
+import { TbBrandBooking } from "react-icons/tb";
+import { TiStarFullOutline } from "react-icons/ti";
+import bali from "../assets/bali-pagoda-sunrise-indonesia.jpg";
+import bintan from "../assets/bintan.jpg";
+import bromo from "../assets/bromo.jpg";
+import childFloater from "../assets/child-with-floater-by-seaside.jpg";
+import heroBg from "../assets/fantastic-blue-sky.jpg";
+import labuanBajo from "../assets/labuanbajo.jpg";
+import plane from "../assets/plane.png";
+import pulauKomodo from "../assets/pulaukomodo.jpg";
+import rajaAmpat from "../assets/rajaampat.jpg";
+import "../App.css";
 
-const populars = [
-    {
-        title: "Raja Ampat",
-        image: rajaAmpat,
-        location: "Papua Barat, Indonesia",
-        rating: "5.0"
-    },
-    {
-        title: "Bali",
-        image: bali,
-        location: "Bali, Indonesia",
-        rating: "5.0"
-    },
-    {
-        title: "Labuan Bajo",
-        image: labuanBajo,
-        location: "NTT, Indonesia",
-        rating: "5.0"
-    },
-    {
-        title: "Bintan",
-        image: bintan,
-        location: "Riau, Indonesia",
-        rating: "5.0"
-    },
-    {
-        title: "Bromo",
-        image: bromo,
-        location: "Jawa Timur, Indonesia",
-        rating: "5.0"
-    },
-    {
-        title: "Pulau Komodo",
-        image: pulauKomodo,
-        location: "NTT, Indonesia",
-        rating: "5.0"
-    }
+const destinations = [
+  {
+    title: "Raja Ampat",
+    image: rajaAmpat,
+    location: "Papua Barat",
+    rating: "5.0",
+    price: "Rp 4,8 jt",
+    duration: "4D3N",
+    vibe: "Island hopping",
+  },
+  {
+    title: "Bali",
+    image: bali,
+    location: "Bali",
+    rating: "4.9",
+    price: "Rp 2,6 jt",
+    duration: "3D2N",
+    vibe: "Culture escape",
+  },
+  {
+    title: "Labuan Bajo",
+    image: labuanBajo,
+    location: "Nusa Tenggara Timur",
+    rating: "4.9",
+    price: "Rp 3,9 jt",
+    duration: "4D3N",
+    vibe: "Sunset sailing",
+  },
+  {
+    title: "Bintan",
+    image: bintan,
+    location: "Kepulauan Riau",
+    rating: "4.8",
+    price: "Rp 2,2 jt",
+    duration: "3D2N",
+    vibe: "Resort weekend",
+  },
+  {
+    title: "Bromo",
+    image: bromo,
+    location: "Jawa Timur",
+    rating: "4.9",
+    price: "Rp 1,7 jt",
+    duration: "2D1N",
+    vibe: "Sunrise trail",
+  },
+  {
+    title: "Pulau Komodo",
+    image: pulauKomodo,
+    location: "Nusa Tenggara Timur",
+    rating: "4.8",
+    price: "Rp 4,3 jt",
+    duration: "4D3N",
+    vibe: "Wild coast",
+  },
 ];
 
+const steps = [
+  {
+    icon: IoLocationSharp,
+    title: "Pilih Destinasi",
+    text: "Bandingkan rute, suasana, dan estimasi budget dalam satu tampilan.",
+  },
+  {
+    icon: LuTicket,
+    title: "Atur Paket",
+    text: "Tentukan tanggal, durasi, dan preferensi trip yang paling cocok.",
+    featured: true,
+  },
+  {
+    icon: IoWallet,
+    title: "Bayar Aman",
+    text: "Checkout cepat dengan ringkasan biaya yang jelas sebelum berangkat.",
+  },
+];
+
+const services = [
+  {
+    name: "City Tour Half Day",
+    price: "Rp 350.000",
+    duration: "4 jam",
+    schedule: "Senin - Jumat, 09.00 / 14.00",
+    features: ["Driver lokal", "2 destinasi", "Free dokumentasi basic"],
+  },
+  {
+    name: "Private Trip Full Day",
+    price: "Rp 850.000",
+    duration: "8 jam",
+    schedule: "Setiap hari, 08.00",
+    features: ["Itinerary fleksibel", "Transport private", "Rekomendasi kuliner"],
+    highlighted: true,
+  },
+  {
+    name: "Custom Travel Plan",
+    price: "Mulai Rp 1.500.000",
+    duration: "2-3 hari",
+    schedule: "By request",
+    features: ["Konsultasi rute", "Booking partner lokal", "Support ringan 3 bulan"],
+  },
+];
+
+const scheduleSlots = ["08.00", "10.00", "14.00", "16.00"];
+
+const faqs = [
+  {
+    question: "Apakah harga sudah termasuk transport?",
+    answer: "Untuk paket private trip sudah termasuk transport lokal. Paket lain bisa menyesuaikan kebutuhan dan area penjemputan.",
+  },
+  {
+    question: "Bagaimana cara konfirmasi jadwal?",
+    answer: "Isi form booking, lalu klik tombol WhatsApp. Pesan otomatis akan berisi layanan, tanggal, jam, dan jumlah peserta.",
+  },
+  {
+    question: "Apakah bisa request itinerary sendiri?",
+    answer: "Bisa. Pilih Custom Travel Plan dan tulis catatan khusus agar tim bisa menyiapkan rekomendasi yang lebih pas.",
+  },
+  {
+    question: "Support ringan 3 bulan mencakup apa?",
+    answer: "Support dummy ini bisa berupa update kecil konten, penyesuaian informasi layanan, dan bantuan ringan setelah halaman dipakai.",
+  },
+];
+
+const estimates = [
+  {
+    type: "Trip Hemat",
+    range: "Rp 350 rb - Rp 750 rb",
+    details: "Cocok untuk city tour singkat, 1-3 peserta, dan destinasi dalam kota.",
+  },
+  {
+    type: "Private Day Trip",
+    range: "Rp 850 rb - Rp 1,8 jt",
+    details: "Untuk perjalanan satu hari penuh dengan transport private dan itinerary fleksibel.",
+    highlighted: true,
+  },
+  {
+    type: "Custom Group",
+    range: "Mulai Rp 2,5 jt",
+    details: "Untuk rombongan, multi-day trip, atau kebutuhan khusus seperti pickup bandara.",
+  },
+];
+
+const testimonials = [
+  {
+    name: "Nadia Putri",
+    role: "Owner jasa tour lokal",
+    quote: "Flow booking-nya jadi kelihatan rapi. Klien tinggal pilih layanan, isi tanggal, lalu pesan WhatsApp sudah otomatis lengkap.",
+    rating: "5.0",
+  },
+  {
+    name: "Raka Mahendra",
+    role: "Travel planner freelance",
+    quote: "Section harga dan jadwal membantu banget untuk menjelaskan paket tanpa harus bolak-balik chat panjang.",
+    rating: "4.9",
+  },
+  {
+    name: "Sinta Amelia",
+    role: "Customer dummy",
+    quote: "Tampilannya terasa profesional dan mudah dipahami. FAQ serta lokasi bikin halaman terlihat lebih terpercaya.",
+    rating: "5.0",
+  },
+];
+
+function getCardsToShow() {
+  if (typeof window === "undefined") return 3;
+  if (window.innerWidth < 700) return 1;
+  if (window.innerWidth < 1100) return 2;
+  return 3;
+}
+
 function Hero() {
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [cardsToShow, setCardsToShow] = useState(3); // Will adjust based on screen size
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [cardsToShow, setCardsToShow] = useState(getCardsToShow);
+  const [activeDestination, setActiveDestination] = useState(destinations[0]);
+  const [bookingForm, setBookingForm] = useState({
+    name: "",
+    phone: "",
+    service: services[1].name,
+    date: "",
+    time: scheduleSlots[0],
+    guests: "2",
+    note: "",
+  });
 
-    // Adjust cards to show based on screen width
-    const updateCardsToShow = () => {
-        if (window.innerWidth < 640) {
-            setCardsToShow(1);
-        } else if (window.innerWidth < 1024) {
-            setCardsToShow(2);
-        } else {
-            setCardsToShow(3);
-        }
-    };
+  useEffect(() => {
+    const updateCardsToShow = () => setCardsToShow(getCardsToShow());
 
-    // Initialize and add resize listener
-    useState(() => {
-        updateCardsToShow();
-        window.addEventListener('resize', updateCardsToShow);
-        return () => window.removeEventListener('resize', updateCardsToShow);
-    }, []);
+    updateCardsToShow();
+    window.addEventListener("resize", updateCardsToShow);
+    return () => window.removeEventListener("resize", updateCardsToShow);
+  }, []);
 
-    const nextSlide = () => {
-        setCurrentIndex((prevIndex) =>
-            prevIndex + cardsToShow >= populars.length ? 0 : prevIndex + 1
-        );
-    };
+  useEffect(() => {
+    setCurrentIndex((index) => Math.min(index, destinations.length - cardsToShow));
+  }, [cardsToShow]);
 
-    const prevSlide = () => {
-        setCurrentIndex((prevIndex) =>
-            prevIndex === 0 ? populars.length - cardsToShow : prevIndex - 1
-        );
-    };
+  const visibleDestinations = useMemo(() => {
+    const end = currentIndex + cardsToShow;
+    return destinations.slice(currentIndex, end);
+  }, [cardsToShow, currentIndex]);
 
-    const visibleDestinations = populars.slice(currentIndex, currentIndex + cardsToShow);
+  const nextSlide = () => {
+    setCurrentIndex((index) => (index + cardsToShow >= destinations.length ? 0 : index + 1));
+  };
 
-    return (
-        <section className="relative font-[inter]">
-            {/* HERO SECTION - Responsive */}
-            <div className="min-h-[80dvh] md:min-h-[90dvh] bg-[url('https://images.unsplash.com/photo-1746982089516-e1174f1685d8?q=80&w=1173&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center overflow-hidden flex mx-4 md:mx-8 lg:mx-[30px] rounded-3xl lg:rounded-[60px] relative">
-                <div className="absolute inset-0 bg-black/10"></div>
+  const prevSlide = () => {
+    setCurrentIndex((index) => (index === 0 ? destinations.length - cardsToShow : index - 1));
+  };
 
-                <div className="relative z-10 flex items-center min-h-[80dvh] px-6 md:px-8 lg:px-[50px] w-full md:w-1/2">
-                    <div className="max-w-2xl text-left">
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 text-black leading-tight">
-                            Experience The Magic Of Flight!
-                        </h1>
-                        <p className="text-base sm:text-lg md:text-xl mb-6 md:mb-8 text-black opacity-90">
-                            Book your dream flight experience today and discover the world from a new perspective.
-                        </p>
-                        <button className="bg-blue-500 border-2 border-blue-500 hover:text-blue-500 text-white font-medium py-2 px-6 sm:py-3 sm:px-8 rounded-full transition-all duration-300 hover:bg-white hover:shadow-lg cursor-pointer text-sm sm:text-base">
-                            Book A Trip Now
-                        </button>
-                    </div>
-                </div>
+  const selectedService = services.find((service) => service.name === bookingForm.service) || services[0];
+  const whatsappMessage = [
+    "Halo WebTravel, saya ingin booking layanan.",
+    `Nama: ${bookingForm.name || "-"}`,
+    `No. HP: ${bookingForm.phone || "-"}`,
+    `Layanan: ${bookingForm.service}`,
+    `Tanggal: ${bookingForm.date || "-"}`,
+    `Jam: ${bookingForm.time}`,
+    `Jumlah peserta: ${bookingForm.guests}`,
+    `Catatan: ${bookingForm.note || "-"}`,
+  ].join("\n");
+  const whatsappUrl = `https://wa.me/6281234567890?text=${encodeURIComponent(whatsappMessage)}`;
 
-                <div className="hidden md:block absolute right-0 bottom-20 w-1/2 h-full flex items-center">
-                    <img
-                        src={plane}
-                        alt="Airplane"
-                        className="h-[80%] object-contain object-bottom ml-[150px] items-center w-full"
-                    />
-                </div>
+  const updateBookingField = (field, value) => {
+    setBookingForm((form) => ({ ...form, [field]: value }));
+  };
+
+  return (
+    <main className="font-[Inter] text-slate-950">
+      <section
+        id="about"
+        className="relative mx-4 overflow-hidden rounded-[28px] bg-slate-950 md:mx-8 lg:mx-[30px] lg:rounded-[42px]"
+      >
+        <img
+          src={heroBg}
+          alt="Blue sky above tropical water"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/78 to-sky-200/20" />
+        <div className="absolute inset-x-8 bottom-0 h-24 rounded-t-full bg-white/30 blur-3xl" />
+
+        <div className="relative grid min-h-[82dvh] items-center gap-8 px-5 py-12 sm:px-8 lg:grid-cols-[1fr_0.9fr] lg:px-14">
+          <div className="max-w-2xl animate-hero-copy">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white/80 px-4 py-2 text-sm font-semibold text-sky-700 shadow-sm backdrop-blur">
+              <IoAirplane />
+              Booking jasa lokal lebih rapi
             </div>
+            <h1 className="max-w-3xl text-4xl font-black leading-[1.02] text-slate-950 sm:text-5xl lg:text-7xl">
+              Booking trip lokal yang rapi, cepat, dan siap lewat WhatsApp.
+            </h1>
+            <p className="mt-5 max-w-xl text-base leading-7 text-slate-700 sm:text-lg">
+              Tampilkan layanan, harga, jadwal, form booking, FAQ, dan lokasi dalam satu halaman yang terasa siap dipakai.
+            </p>
 
-            {/* SOCIAL */}
-            <div className="mx-4 md:mx-8 lg:mx-[100px] h-auto py-8 md:py-0 md:h-[30dvh] pt-[10px] flex flex-col md:flex-row items-center gap-4 md:gap-[40px] justify-between">
-                <div className="border-[1px] w-full sm:w-[19rem] h-[70px] rounded-[100px] flex items-center border-[#dfdfdf] justify-center md:justify-start">
-                    <p className="ml-4 md:ml-[30px] text-[#7c7c7c] text-[0.9rem]">Follow</p>
-                    <div className='flex gap-2 sm:gap-[15px] ml-[20px]'>
-                        {[FaTwitter, FaFacebook, FaInstagram, FaGithub].map((Icon, i) => (
-                            <button key={i} className='rounded-[50%] border-[#c2c2c2] border-[1px] p-2 sm:p-[8px] cursor-pointer'>
-                                <Icon className={i === 1 ? 'text-blue-500' : ''} />
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-                <div className='flex flex-wrap justify-center md:flex-nowrap items-center gap-2 sm:gap-4 md:gap-[40px]'>
-                    {[
-                        { icon: FaAirbnb, text: 'airbnb' },
-                        { icon: TbBrandBooking, text: 'Booking.com' },
-                        { icon: SiTrivago, text: 'trivago' },
-                        { icon: SiExpedia, text: 'Expedia' }
-                    ].map((item, i) => (
-                        <div key={i} className='flex items-center gap-1 sm:gap-2'>
-                            <item.icon className='text-3xl sm:text-[50px] text-[#b8b8b8]' />
-                            <p className='text-lg sm:text-[25px] text-[#8f8f8f] font-[500]'>{item.text}</p>
-                        </div>
-                    ))}
-                </div>
+            <div className="mt-8 grid gap-3 rounded-2xl border border-white/70 bg-white/85 p-3 shadow-xl shadow-sky-950/10 backdrop-blur md:grid-cols-[1fr_1fr_auto]">
+              <label className="flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3">
+                <LuSearch className="text-sky-600" />
+                <span>
+                  <span className="block text-xs font-semibold uppercase text-slate-500">Destination</span>
+                  <span className="text-sm font-bold">Labuan Bajo</span>
+                </span>
+              </label>
+              <label className="flex items-center gap-3 rounded-xl bg-slate-50 px-4 py-3">
+                <LuCalendarDays className="text-sky-600" />
+                <span>
+                  <span className="block text-xs font-semibold uppercase text-slate-500">Schedule</span>
+                  <span className="text-sm font-bold">August 2026</span>
+                </span>
+              </label>
+              <a
+                href="#booking"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-6 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-sky-600"
+              >
+                Booking Sekarang
+                <IoArrowForwardOutline />
+              </a>
             </div>
+          </div>
 
-            {/* HERO END */}
-
-            {/* POPULAR DESTINATION */}
-                        <div className="mx-4 md:mx-8 lg:mx-[100px] leading-[50px] mb-6 md:mb-10 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="relative hidden min-h-[560px] lg:block">
+            <img
+              src={plane}
+              alt="Airplane"
+              className="absolute right-0 top-10 z-10 w-[92%] animate-plane-float drop-shadow-2xl"
+            />
+            <div className="absolute bottom-16 left-6 z-20 w-72 rounded-2xl border border-white/70 bg-white/88 p-4 shadow-2xl backdrop-blur">
+              <p className="text-xs font-bold uppercase text-slate-500">Trending now</p>
+              <div className="mt-3 flex items-center gap-3">
+                <img src={activeDestination.image} alt="" className="h-16 w-16 rounded-xl object-cover" />
                 <div>
-                    <h1 className="font-bold text-2xl sm:text-3xl md:text-4xl">Popular Destination</h1>
-                    <p className="text-[#757575] text-sm sm:text-base">Unleash Your Wanderlust With Logos</p>
+                  <h2 className="font-bold">{activeDestination.title}</h2>
+                  <p className="text-sm text-slate-600">{activeDestination.vibe}</p>
+                  <p className="mt-1 text-sm font-bold text-sky-700">{activeDestination.price}</p>
                 </div>
-                <div className="flex gap-3">
-                    <button onClick={prevSlide} className="cursor-pointer hover:scale-110 transition-transform">
-                        <IoIosArrowDropleftCircle className="text-4xl sm:text-5xl" />
-                    </button>
-                    <button onClick={nextSlide} className="cursor-pointer hover:scale-110 transition-transform">
-                        <IoIosArrowDroprightCircle className="text-4xl sm:text-5xl" />
-                    </button>
-                </div>
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            <div className='h-auto sm:h-[70dvh] py-6 md:py-10 cursor-pointer overflow-x-auto px-4 md:px-[100px]'>
-                <div className="flex gap-4 sm:gap-8 w-max sm:w-full mx-auto">
-                    {visibleDestinations.map((popular, index) => (
-                        <div
-                            key={index}
-                            className="bg-white rounded-lg shadow-lg overflow-hidden transition-all hover:scale-[1.02] hover:shadow-xl duration-300 w-[300px] sm:flex-1 sm:max-w-[360px] sm:min-w-[300px] cursor-pointer"
-                        >
-                            <img
-                                src={popular.image}
-                                alt={popular.title}
-                                className="w-full h-48 object-cover"
-                            />
-                            <div className="p-5">
-                                <h2 className="text-xl font-semibold mb-3">{popular.title}</h2>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-gray-600 text-sm sm:text-base">{popular.location}</span>
-                                    <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs sm:text-sm flex items-center gap-1">
-                                        <TiStarFullOutline /> {popular.rating}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+      <section className="mx-4 flex flex-col items-center justify-between gap-6 py-8 md:mx-8 md:flex-row lg:mx-[100px]">
+        <div className="flex w-full max-w-sm items-center justify-between rounded-full border border-slate-200 bg-white px-5 py-3 shadow-sm">
+          <span className="text-sm font-semibold text-slate-500">Follow</span>
+          {[FaTwitter, FaFacebook, FaInstagram, FaGithub].map((Icon, index) => (
+            <button
+              key={index}
+              className="rounded-full border border-slate-200 p-2 text-slate-700 transition hover:-translate-y-0.5 hover:border-sky-300 hover:text-sky-600"
+              aria-label="Social link"
+            >
+              <Icon />
+            </button>
+          ))}
+        </div>
+
+        <div className="grid w-full grid-cols-2 items-center gap-4 text-slate-400 sm:grid-cols-4 md:w-auto md:gap-8">
+          {[
+            { icon: FaAirbnb, text: "airbnb" },
+            { icon: TbBrandBooking, text: "Booking" },
+            { icon: SiTrivago, text: "trivago" },
+            { icon: SiExpedia, text: "Expedia" },
+          ].map((item) => (
+            <div key={item.text} className="flex items-center justify-center gap-2 text-lg font-bold">
+              <item.icon className="text-3xl" />
+              <span>{item.text}</span>
             </div>
-            {/* POPULAR DESTINATION END */}
+          ))}
+        </div>
+      </section>
 
+      <section id="tour" className="px-4 py-12 md:px-8 lg:px-[100px]">
+        <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.24em] text-sky-600">Popular destination</p>
+            <h2 className="mt-2 text-3xl font-black sm:text-4xl">Paket yang sering dilirik</h2>
+          </div>
+          <div className="flex gap-3">
+            <button onClick={prevSlide} className="text-5xl text-slate-900 transition hover:-translate-x-1 hover:text-sky-600" aria-label="Previous destinations">
+              <IoIosArrowDropleftCircle />
+            </button>
+            <button onClick={nextSlide} className="text-5xl text-slate-900 transition hover:translate-x-1 hover:text-sky-600" aria-label="Next destinations">
+              <IoIosArrowDroprightCircle />
+            </button>
+          </div>
+        </div>
 
-            {/* JOURNEY  */}
-            <div className="min-h-[90dvh] flex flex-col items-center justify-center shadow-lg bg-white py-8 sm:py-12 px-4 sm:px-6">
-                <div className="text-center mb-8 sm:mb-16 max-w-2xl mx-auto">
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">Journey To The Skies Made Simple!</h1>
-                    <p className="text-gray-600 text-base sm:text-lg leading-relaxed">
-                        Traveling is A Wonderful Way To Explore New Places, Learn About Different Cultures, And Gain Unique Experiences.
-                    </p>
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {visibleDestinations.map((destination) => (
+            <article
+              key={destination.title}
+              onMouseEnter={() => setActiveDestination(destination)}
+              className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-2xl hover:shadow-sky-950/10"
+            >
+              <div className="relative h-72 overflow-hidden">
+                <img
+                  src={destination.image}
+                  alt={destination.title}
+                  className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/10 to-transparent" />
+                <div className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-sm font-bold text-slate-900">
+                  {destination.duration}
                 </div>
-
-                <div className="flex flex-col lg:flex-row w-full max-w-6xl mx-auto gap-4 sm:gap-6 md:gap-8 px-4 ">
-                    {[
-                        { icon: IoLocationSharp, title: "Book", subtitle: "A Ticket", bg: "gray-50" },
-                        {
-                            icon: LuTicket,
-                            title: "Book",
-                            subtitle: "A Ticket",
-                            bg: "blue-600",
-                            text: "white",
-                            description: "Traveling is A Wonderful Way To Explore New Places, Learn About Different Cultures, And Gain Unique Experiences.",
-                            button: true
-                        },
-                        { icon: IoWallet, title: "Pay & Start", subtitle: "Journey", bg: "gray-50" }
-                    ].map((item, index) => (
-                        <div
-                            key={index}
-                            className={`bg-${item.bg} p-6 sm:p-8 md:p-12 rounded-3xl shadow-md flex-1 flex flex-col items-center text-center relative ${item.text ? 'text-' + item.text : ''} bg-blue-600`}
-                        >
-                            <div className={`absolute -top-6 sm:-top-8 bg-white p-3 sm:p-4 rounded-full shadow-lg`}>
-                                <item.icon className={`text-2xl sm:text-3xl ${item.bg === 'blue-600' ? 'text-blue-600' : 'text-blue-600'}`} />
-                            </div>
-                            <h2 className="text-xl sm:text-2xl font-bold mb-2 mt-6 sm:mt-8">{item.title}</h2>
-                            <h3 className={`text-2xl sm:text-3xl font-semibold mb-4 sm:mb-6 ${item.bg === 'blue-600' ? '' : 'text-blue-600'}`}>
-                                {item.subtitle}
-                            </h3>
-                            {item.description && (
-                                <p className={`mb-4 sm:mb-8 ${item.text ? 'text-' + item.text : ''}`}>
-                                    {item.description}
-                                </p>
-                            )}
-                            {item.button && (
-                                <button className="bg-white text-blue-600 px-4 sm:px-6 py-1 sm:py-2 rounded-full font-medium hover:bg-gray-100 transition cursor-pointer text-sm sm:text-base">
-                                    LEARN MORE
-                                </button>
-                            )}
-                        </div>
-                    ))}
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <p className="flex items-center gap-1 text-sm font-semibold">
+                    <IoLocationSharp />
+                    {destination.location}
+                  </p>
+                  <h3 className="mt-1 text-2xl font-black">{destination.title}</h3>
                 </div>
+              </div>
+              <div className="flex items-center justify-between p-5">
+                <div>
+                  <p className="text-sm text-slate-500">{destination.vibe}</p>
+                  <p className="mt-1 text-xl font-black text-slate-950">{destination.price}</p>
+                </div>
+                <span className="flex items-center gap-1 rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-700">
+                  <TiStarFullOutline />
+                  {destination.rating}
+                </span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="package" className="bg-slate-50 px-4 py-16 md:px-8 lg:px-[100px]">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="text-sm font-bold uppercase tracking-[0.24em] text-sky-600">Simple journey</p>
+          <h2 className="mt-2 text-3xl font-black sm:text-4xl">Dari ide liburan ke checkout dalam tiga langkah.</h2>
+        </div>
+
+        <div className="mt-12 grid gap-5 lg:grid-cols-3">
+          {steps.map((step) => (
+            <article
+              key={step.title}
+              className={`rounded-2xl p-7 shadow-sm ${
+                step.featured ? "bg-slate-950 text-white" : "border border-slate-200 bg-white text-slate-950"
+              }`}
+            >
+              <div className={`mb-8 inline-flex rounded-2xl p-4 ${step.featured ? "bg-sky-500" : "bg-sky-50 text-sky-600"}`}>
+                <step.icon className="text-3xl" />
+              </div>
+              <h3 className="text-2xl font-black">{step.title}</h3>
+              <p className={`mt-3 leading-7 ${step.featured ? "text-slate-200" : "text-slate-600"}`}>{step.text}</p>
+              {step.featured && (
+                <button className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-sky-100">
+                  Learn more
+                  <IoArrowForwardOutline />
+                </button>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="services" className="px-4 py-16 md:px-8 lg:px-[100px]">
+        <div className="mb-9 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.24em] text-sky-600">Layanan & harga</p>
+            <h2 className="mt-2 text-3xl font-black sm:text-4xl">Paket jasa lokal yang mudah dipilih.</h2>
+          </div>
+          
+        </div>
+
+        <div className="grid gap-5 lg:grid-cols-3">
+          {services.map((service) => (
+            <article
+              key={service.name}
+              className={`rounded-2xl p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl ${
+                service.highlighted ? "bg-slate-950 text-white" : "border border-slate-200 bg-white"
+              }`}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="text-2xl font-black">{service.name}</h3>
+                  <p className={`mt-2 text-sm ${service.highlighted ? "text-slate-300" : "text-slate-500"}`}>
+                    {service.duration}
+                  </p>
+                </div>
+                <span className={`rounded-full px-3 py-1 text-xs font-bold ${service.highlighted ? "bg-sky-500 text-white" : "bg-sky-50 text-sky-700"}`}>
+                  Populer
+                </span>
+              </div>
+              <p className={`mt-7 text-3xl font-black ${service.highlighted ? "text-sky-200" : "text-slate-950"}`}>
+                {service.price}
+              </p>
+              <p className={`mt-3 flex items-center gap-2 text-sm ${service.highlighted ? "text-slate-300" : "text-slate-600"}`}>
+                <IoTimeOutline className="text-lg" />
+                {service.schedule}
+              </p>
+              <ul className="mt-7 space-y-3">
+                {service.features.map((feature) => (
+                  <li key={feature} className={`flex items-start gap-3 text-sm ${service.highlighted ? "text-slate-200" : "text-slate-600"}`}>
+                    <LuCheck className="mt-0.5 shrink-0 text-sky-500" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+              <button
+                className={`mt-8 w-full rounded-xl px-5 py-3 text-sm font-bold transition ${
+                  service.highlighted ? "bg-white text-slate-950 hover:bg-sky-100" : "bg-slate-950 text-white hover:bg-sky-600"
+                }`}
+                onClick={() => updateBookingField("service", service.name)}
+              >
+                Pilih layanan ini
+              </button>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="booking" className="bg-slate-50 px-4 py-16 md:px-8 lg:px-[100px]">
+        <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+          <aside className="rounded-[28px] bg-slate-950 p-6 text-white shadow-2xl lg:p-10">
+            <p className="text-sm font-bold uppercase tracking-[0.24em] text-sky-300">Form booking</p>
+            <h2 className="mt-4 text-3xl font-black sm:text-4xl">Pesan otomatis ke WhatsApp.</h2>
+            <p className="mt-4 leading-7 text-slate-300">
+              Setelah form diisi, tombol WhatsApp akan membuka chat dengan format pesan yang sudah tersusun rapi.
+            </p>
+            <div className="mt-8 rounded-2xl border border-white/10 bg-white/10 p-5">
+              <p className="text-sm text-slate-300">Layanan terpilih</p>
+              <h3 className="mt-1 text-2xl font-black">{selectedService.name}</h3>
+              <p className="mt-2 text-sky-200">{selectedService.price}</p>
+              <p className="mt-1 text-sm text-slate-300">{selectedService.schedule}</p>
             </div>
-            {/* JOURNEY END */}
-
-
-            {/* BOOK A FLIGHT CTA */}
-            <div className="min-h-screen bg-white p-4 sm:p-6 md:p-8 lg:p-12">
-                <div className="max-w-6xl mx-auto">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
-                        <div className="space-y-4 sm:space-y-6 md:space-y-8 flex flex-col justify-center">
-                            <div className="space-y-1 sm:space-y-2">
-                                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-sky-400">
-                                    UNLEASH
-                                </h1>
-                                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-gray-800">
-                                    WANDERLUST WITH
-                                </h2>
-                                <h3 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600">
-                                    Logos
-                                </h3>
-                            </div>
-                            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 max-w-lg leading-relaxed">
-                                Traveling Is A Wonderful Way To Explore New Places, Learn About Different Cultures
-                            </p>
-                        </div>
-                        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl h-64 sm:h-80 md:h-96 lg:h-auto">
-                            <img
-                                src={childFloater}
-                                alt="Travel adventure"
-                                className="absolute inset-0 w-full h-full object-cover"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
-                        <div className="bg-gray-50 rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 flex items-center justify-between">
-                            <div className="space-y-1 sm:space-y-2">
-                                <span className="inline-block px-2 sm:px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-xs sm:text-sm font-medium">
-                                    LIMITED OFFER
-                                </span>
-                                <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-600">20% OFF</h3>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-gray-500 text-xs sm:text-sm md:text-base">On all flights this season</p>
-                            </div>
-                        </div>
-                        <div className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-lg h-24 sm:h-32 group">
-                            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-sky-500 transition-all duration-500 group-hover:from-blue-700 group-hover:to-sky-600 cursor-pointer" />
-                            <div className="absolute top-1/2 -translate-y-1/2 -left-8 group-hover:left-[calc(100%+32px)] transition-all duration-1000 ease-in-out ">
-                                <IoAirplane className='text-white text-3xl' />
-                            </div>
-                            <button className="absolute inset-0 flex items-center justify-center space-x-2 overflow-hidden cursor-pointer">
-                                <span className="text-white text-xl font-semibold transition-transform duration-300 group-hover:translate-x-2">
-                                    Book A Flight Now
-                                </span>
-                                <IoArrowForwardOutline className="text-white text-xl transition-all duration-500 group-hover:translate-x-1 group-hover:scale-110" />
-                            </button>
-                            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                                {[...Array(5)].map((_, i) => (
-                                    <div
-                                        key={i}
-                                        className="absolute top-0 left-0 w-1 h-1 bg-white rounded-full opacity-0 group-hover:opacity-80 group-hover:animate-sparkle"
-                                        style={{
-                                            top: `${Math.random() * 100}%`,
-                                            left: `${Math.random() * 100}%`,
-                                            animationDelay: `${i * 0.2}s`,
-                                        }}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div className="mt-6 grid gap-3 text-sm text-slate-300">
+              <p className="flex items-center gap-2">
+                <LuCheck className="text-sky-300" />
+                CTA WhatsApp dengan pesan otomatis
+              </p>
+              <p className="flex items-center gap-2">
+                <LuCheck className="text-sky-300" />
+                Support ringan 3 bulan
+              </p>
+              <p className="flex items-center gap-2">
+                <LuCheck className="text-sky-300" />
+                Siap deploy Cloudflare Pages + SSL
+              </p>
             </div>
-            {/* BOOK A FLIGHT CTA */}
-        </section >
-    )
+          </aside>
+
+          <form className="grid gap-4 rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm sm:grid-cols-2 lg:p-8">
+            <label className="grid gap-2">
+              <span className="text-sm font-bold text-slate-700">Nama</span>
+              <input
+                value={bookingForm.name}
+                onChange={(event) => updateBookingField("name", event.target.value)}
+                className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-sky-500 focus:ring-4 focus:ring-sky-100"
+                placeholder="Nama pemesan"
+              />
+            </label>
+            <label className="grid gap-2">
+              <span className="text-sm font-bold text-slate-700">Nomor HP</span>
+              <input
+                value={bookingForm.phone}
+                onChange={(event) => updateBookingField("phone", event.target.value)}
+                className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-sky-500 focus:ring-4 focus:ring-sky-100"
+                placeholder="08xxxxxxxxxx"
+              />
+            </label>
+            <label className="grid gap-2 sm:col-span-2">
+              <span className="text-sm font-bold text-slate-700">Pilihan layanan</span>
+              <select
+                value={bookingForm.service}
+                onChange={(event) => updateBookingField("service", event.target.value)}
+                className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-sky-500 focus:ring-4 focus:ring-sky-100"
+              >
+                {services.map((service) => (
+                  <option key={service.name} value={service.name}>
+                    {service.name} - {service.price}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid gap-2">
+              <span className="text-sm font-bold text-slate-700">Tanggal</span>
+              <input
+                type="date"
+                value={bookingForm.date}
+                onChange={(event) => updateBookingField("date", event.target.value)}
+                className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-sky-500 focus:ring-4 focus:ring-sky-100"
+              />
+            </label>
+            <label className="grid gap-2">
+              <span className="text-sm font-bold text-slate-700">Jam</span>
+              <select
+                value={bookingForm.time}
+                onChange={(event) => updateBookingField("time", event.target.value)}
+                className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-sky-500 focus:ring-4 focus:ring-sky-100"
+              >
+                {scheduleSlots.map((slot) => (
+                  <option key={slot} value={slot}>
+                    {slot}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid gap-2">
+              <span className="text-sm font-bold text-slate-700">Jumlah peserta</span>
+              <input
+                type="number"
+                min="1"
+                value={bookingForm.guests}
+                onChange={(event) => updateBookingField("guests", event.target.value)}
+                className="rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-sky-500 focus:ring-4 focus:ring-sky-100"
+              />
+            </label>
+            <label className="grid gap-2">
+              <span className="text-sm font-bold text-slate-700">Ketersediaan</span>
+              <div className="flex h-[50px] items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 text-sm font-bold text-emerald-700">
+                <LuClock3 />
+                Slot tersedia
+              </div>
+            </label>
+            <label className="grid gap-2 sm:col-span-2">
+              <span className="text-sm font-bold text-slate-700">Catatan</span>
+              <textarea
+                value={bookingForm.note}
+                onChange={(event) => updateBookingField("note", event.target.value)}
+                className="min-h-28 rounded-xl border border-slate-200 px-4 py-3 outline-none transition focus:border-sky-500 focus:ring-4 focus:ring-sky-100"
+                placeholder="Contoh: jemput di hotel, request destinasi, alergi makanan, dll."
+              />
+            </label>
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-6 py-4 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-emerald-600 sm:col-span-2"
+            >
+              <FaWhatsapp className="text-xl" />
+              Kirim Booking via WhatsApp
+            </a>
+          </form>
+        </div>
+      </section>
+
+      <section className="px-4 py-16 md:px-8 lg:px-[100px]">
+        <div className="mb-9 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.24em] text-sky-600">Estimasi biaya</p>
+            <h2 className="mt-2 text-3xl font-black sm:text-4xl">Gambaran budget sebelum booking.</h2>
+          </div>
+          
+        </div>
+
+        <div className="grid gap-5 lg:grid-cols-3">
+          {estimates.map((estimate) => (
+            <article
+              key={estimate.type}
+              className={`rounded-2xl p-6 shadow-sm ${
+                estimate.highlighted ? "bg-sky-500 text-white" : "border border-slate-200 bg-white text-slate-950"
+              }`}
+            >
+              <p className={`text-sm font-bold uppercase tracking-[0.18em] ${estimate.highlighted ? "text-sky-100" : "text-sky-600"}`}>
+                {estimate.type}
+              </p>
+              <h3 className="mt-4 text-3xl font-black">{estimate.range}</h3>
+              <p className={`mt-4 leading-7 ${estimate.highlighted ? "text-sky-50" : "text-slate-600"}`}>
+                {estimate.details}
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="faq" className="px-4 py-16 md:px-8 lg:px-[100px]">
+        <div className="grid gap-8 lg:grid-cols-[0.7fr_1.3fr]">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.24em] text-sky-600">FAQ</p>
+            <h2 className="mt-2 text-3xl font-black sm:text-4xl">Pertanyaan yang sering muncul.</h2>
+          </div>
+          <div className="space-y-3">
+            {faqs.map((faq, index) => (
+              <details key={faq.question} className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm" open={index === 0}>
+                <summary className="cursor-pointer list-none text-lg font-black text-slate-950">
+                  {faq.question}
+                </summary>
+                <p className="mt-3 leading-7 text-slate-600">{faq.answer}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-slate-950 px-4 py-16 text-white md:px-8 lg:px-[100px]">
+        <div className="mb-9 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.24em] text-sky-300">Testimonial</p>
+            <h2 className="mt-2 text-3xl font-black sm:text-4xl">Cerita dari pengguna.</h2>
+          </div>
+        </div>
+
+        <div className="grid gap-5 lg:grid-cols-3">
+          {testimonials.map((testimonial) => (
+            <article key={testimonial.name} className="rounded-2xl border border-white/10 bg-white/10 p-6 shadow-sm">
+              <div className="mb-5 flex items-center justify-between">
+                <span className="flex items-center gap-1 rounded-full bg-amber-300 px-3 py-1 text-sm font-black text-amber-950">
+                  <TiStarFullOutline />
+                  {testimonial.rating}
+                </span>
+              </div>
+              <p className="leading-7 text-slate-100">"{testimonial.quote}"</p>
+              <div className="mt-6 border-t border-white/10 pt-5">
+                <h3 className="font-black">{testimonial.name}</h3>
+                <p className="mt-1 text-sm text-slate-300">{testimonial.role}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="location" className="bg-slate-50 px-4 py-16 md:px-8 lg:px-[100px]">
+        <div className="mb-8 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.24em] text-sky-600">Lokasi</p>
+            <h2 className="mt-2 text-3xl font-black sm:text-4xl">Kantor WebTravel.</h2>
+          </div>
+          <p className="flex max-w-xl items-center gap-2 leading-7 text-slate-600">
+            <LuMapPin className="shrink-0 text-sky-600" />
+            Jakarta Selatan, Indonesia.
+          </p>
+        </div>
+        <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm">
+          <iframe
+            title="Lokasi WebTravel"
+            src="https://www.google.com/maps?q=Jakarta%20Selatan%2C%20Indonesia&output=embed"
+            className="h-[420px] w-full"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
+      </section>
+
+      <section id="contact" className="px-4 py-16 md:px-8 lg:px-[100px]">
+        <div className="grid overflow-hidden rounded-[28px] bg-slate-950 text-white shadow-2xl lg:grid-cols-[1fr_0.9fr]">
+          <div className="p-6 sm:p-10 lg:p-14">
+            <span className="inline-flex rounded-full bg-sky-400/15 px-4 py-2 text-sm font-bold text-sky-200">
+              Limited dummy offer
+            </span>
+            <h2 className="mt-6 max-w-2xl text-4xl font-black leading-tight sm:text-5xl">
+              Siapkan halaman booking yang terasa siap dipakai.
+            </h2>
+            <p className="mt-5 max-w-xl leading-7 text-slate-300">
+              Section ini dibuat seperti CTA nyata: ada promo, visual, dan tombol interaktif supaya proyek dummy terlihat matang.
+            </p>
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-2xl border border-white/10 bg-white/10 p-5">
+                <p className="text-sm text-slate-300">Season discount</p>
+                <p className="mt-1 text-3xl font-black text-sky-200">20% OFF</p>
+              </div>
+              <a
+                href="#about"
+                className="group relative flex min-h-28 items-center justify-center overflow-hidden rounded-2xl bg-sky-500 px-5 font-bold text-white transition hover:bg-sky-400"
+              >
+                <IoAirplane className="absolute left-5 text-2xl transition duration-700 group-hover:left-[calc(100%-2.5rem)]" />
+                <span className="inline-flex items-center gap-2">
+                  Book a Flight Now
+                  <IoArrowForwardOutline />
+                </span>
+              </a>
+            </div>
+          </div>
+          <div className="relative min-h-80">
+            <img src={childFloater} alt="Beach travel moment" className="absolute inset-0 h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 to-transparent lg:bg-gradient-to-r" />
+          </div>
+        </div>
+      </section>
+    </main>
+  );
 }
 
 export default Hero;
